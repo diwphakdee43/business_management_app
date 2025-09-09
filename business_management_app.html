@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบจัดการธุรกิจ</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Inter Font -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .sidebar {
+            transition: transform 0.3s ease-in-out;
+            transform: translateX(-100%);
+        }
+        .sidebar.open {
+            transform: translateX(0);
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800 flex min-h-screen">
+
+    <!-- Sidebar Menu -->
+    <aside id="sidebar" class="sidebar fixed inset-y-0 left-0 w-64 bg-gray-900 text-gray-200 z-50 overflow-y-auto lg:translate-x-0 lg:static lg:block">
+        <div class="p-6">
+            <h1 class="text-2xl font-bold text-white mb-6">Business Dashboard</h1>
+            <nav>
+                <ul class="space-y-2">
+                    <li><a href="#dashboard" class="menu-link block px-4 py-2 rounded-lg text-white font-medium hover:bg-gray-700">หน้าหลัก</a></li>
+                    <li><a href="#my_products" class="menu-link block px-4 py-2 rounded-lg hover:bg-gray-700">สินค้าของฉัน</a></li>
+                    <li><a href="#my_purchase" class="menu-link block px-4 py-2 rounded-lg hover:bg-gray-700">รายการซื้อ</a></li>
+                    <li><a href="#my_order" class="menu-link block px-4 py-2 rounded-lg hover:bg-gray-700">คำสั่งซื้อ</a></li>
+                    <li><a href="#my_sale" class="menu-link block px-4 py-2 rounded-lg hover:bg-gray-700">ยอดขาย</a></li>
+                    <li><a href="#my_calendar" class="menu-link block px-4 py-2 rounded-lg hover:bg-gray-700">ปฏิทิน</a></li>
+                    <li><a href="#my_financial_account" class="menu-link block px-4 py-2 rounded-lg hover:bg-gray-700">การเงิน</a></li>
+                    <li><a href="#my_crm" class="menu-link block px-4 py-2 rounded-lg hover:bg-gray-700">ลูกค้าสัมพันธ์</a></li>
+                </ul>
+            </nav>
+        </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <div class="flex-1 flex flex-col p-6 overflow-hidden">
+        <!-- Header -->
+        <header class="bg-white rounded-lg shadow-md p-4 mb-6 flex justify-between items-center">
+            <button id="menu-button" class="lg:hidden text-gray-600 focus:outline-none">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+                </svg>
+            </button>
+            <h2 id="page-title" class="text-xl font-semibold text-gray-900">หน้าหลัก</h2>
+        </header>
+
+        <!-- Content Area -->
+        <main class="flex-1 overflow-y-auto">
+
+            <!-- Dashboard Page -->
+            <section id="dashboard" class="page-content active">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <!-- Dashboard Cards -->
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <div class="text-gray-500 text-sm font-medium">ยอดขายวันนี้</div>
+                        <div class="text-3xl font-bold mt-2">฿<span id="today-sales">0</span></div>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <div class="text-gray-500 text-sm font-medium">กำไรวันนี้</div>
+                        <div class="text-3xl font-bold mt-2 text-green-500">฿<span id="today-profit">0</span></div>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <div class="text-gray-500 text-sm font-medium">ออเดอร์ค้างส่ง</div>
+                        <div class="text-3xl font-bold mt-2"><span id="pending-orders">0</span></div>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <div class="text-gray-500 text-sm font-medium">จำนวนลูกค้า</div>
+                        <div class="text-3xl font-bold mt-2"><span id="total-customers">0</span></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- My Product Page -->
+            <section id="my_products" class="page-content hidden">
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-semibold mb-4">เพิ่ม/จัดการสินค้า</h3>
+                    <form id="product-form" class="space-y-4 mb-6">
+                        <input type="hidden" id="product-id">
+                        <div>
+                            <label for="product-name" class="block text-sm font-medium text-gray-700">ชื่อสินค้า</label>
+                            <input type="text" id="product-name" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
+                        </div>
+                        <div>
+                            <label for="product-price" class="block text-sm font-medium text-gray-700">ราคา (บาท)</label>
+                            <input type="number" id="product-price" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
+                        </div>
+                        <div>
+                            <label for="product-cost" class="block text-sm font-medium text-gray-700">ต้นทุน (บาท)</label>
+                            <input type="number" id="product-cost" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
+                        </div>
+                        <div>
+                            <label for="product-stock" class="block text-sm font-medium text-gray-700">จำนวนในสต็อก</label>
+                            <input type="number" id="product-stock" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
+                        </div>
+                        <button type="submit" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-md shadow-sm">บันทึกสินค้า</button>
+                    </form>
+                    <div id="product-list" class="mt-6">
+                        <h4 class="text-lg font-semibold mb-2">รายการสินค้า</h4>
+                        <table class="min-w-full bg-white rounded-md shadow-sm overflow-hidden">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ชื่อสินค้า</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ราคา</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ต้นทุน</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">สต็อก</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">จัดการ</th>
+                                </tr>
+                            </thead>
+                            <tbody id="product-table-body" class="divide-y divide-gray-200">
+                                <!-- Products will be rendered here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- My Purchase Page -->
+            <section id="my_purchase" class="page-content hidden">
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-semibold mb-4">เพิ่มรายการซื้อ</h3>
+                    <form id="purchase-form" class="space-y-4 mb-6">
+                        <div>
+                            <label for="purchase-date" class="block text-sm font-medium text-gray-700">วันที่</label>
+                            <input type="date" id="purchase-date" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
+                        </div>
+                        <div>
+                            <label for="purchase-item" class="block text-sm font-medium text-gray-700">รายการที่ซื้อ</label>
+                            <input type="text" id="purchase-item" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
+                        </div>
+                        <div>
+                            <label for="purchase-amount" class="block text-sm font-medium text-gray-700">จำนวนเงิน (บาท)</label>
+                            <input type="number" id="purchase-amount" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
+                        </div>
+                        <button type="submit" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-md shadow-sm">บันทึกรายการซื้อ</button>
+                    </form>
+                    <div id="purchase-list" class="mt-6">
+                        <h4 class="text-lg font-semibold mb-2">รายการซื้อทั้งหมด</h4>
+                        <table class="min-w-full bg-white rounded-md shadow-sm overflow-hidden">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">วันที่</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">รายการ</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">จำนวนเงิน</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">จัดการ</th>
+                                </tr>
+                            </thead>
+                            <tbody id="purchase-table-body" class="divide-y divide-gray-200">
+                                <!-- Purchases will be rendered here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- My Order Page -->
+            <section id="my_order" class="page-content hidden">
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-semibold mb-4">สร้างคำสั่งซื้อใหม่</h3>
+                    <form id="order-form" class="space-y-4 mb-6">
+                        <div>
+                            <label for="order-customer-name" class="block text-sm font-medium text-gray-700">ชื่อลูกค้า</label>
+                            <input type="text" id="order-customer-name" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
+                            <div id="customer-suggestions" class="bg-white rounded-md shadow-md mt-1 max-h-40 overflow-y-auto hidden"></div>
+                        </div>
+                        <div>
+                            <label for="order-delivery-date" class="block text-sm font-medium text-gray-700">วันที่ส่ง</label>
+                            <input type="date" id="order-delivery-date" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
+                        </div>
+                        <div>
+                            <label for="order-delivery-address" class="block text-sm font-medium text-gray-700">ที่อยู่จัดส่ง</label>
+                            <input type="text" id="order-delivery-address" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
+                        </div>
+                        
+                        <div id="order-items-list" class="space-y-4">
+                            <!-- Order items will be added here -->
+                        </div>
+                        <button type="button" id="add-order-item-btn" class="w-full bg-green-500 hover:bg-green-600 text-white font-medium py-2 px-4 rounded-md shadow-sm">เพิ่มสินค้า</button>
+
+                        <div>
+                            <label for="order-shipping-cost" class="block text-sm font-medium text-gray-700">ค่าจัดส่ง (บาท)</label>
+                            <input type="number" id="order-shipping-cost" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" value="0">
+                        </div>
+                        <div>
+                            <label for="order-discount" class="block text-sm font-medium text-gray-700">ส่วนลด (บาท)</label>
+                            <input type="number" id="order-discount" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" value="0">
+                        </div>
+                        <div class="text-lg font-semibold text-gray-900 flex justify-between">
+                            <span>รวมทั้งหมด:</span>
+                            <span>฿<span id="order-total-price">0</span></span>
+                        </div>
+                        <button type="submit" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-md shadow-sm">บันทึกคำสั่งซื้อ</button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- My Sale Page -->
+            <section id="my_sale" class="page-content hidden">
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-semibold mb-4">รายการขาย</h3>
+                    <div id="sale-list" class="space-y-4">
+                        <!-- Sales orders will be rendered here -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- My Calendar Page -->
+            <section id="my_calendar" class="page-content hidden">
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-semibold mb-4">ปฏิทินการจัดส่ง</h3>
+                    <div id="calendar" class="w-full">
+                        <!-- Calendar will be generated here -->
+                    </div>
+                    <div id="calendar-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden items-center justify-center z-50">
+                        <div class="bg-white rounded-lg shadow-xl p-6 w-11/12 md:w-2/3 lg:w-1/2">
+                            <div class="flex justify-between items-center mb-4">
+                                <h4 id="modal-date-title" class="text-lg font-semibold"></h4>
+                                <button id="close-modal-btn" class="text-gray-500 hover:text-gray-700">&times;</button>
+                            </div>
+                            <div id="modal-orders-list" class="space-y-4 max-h-96 overflow-y-auto">
+                                <!-- Orders for the selected date will be rendered here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- My Financial Account Page -->
+            <section id="my_financial_account" class="page-content hidden">
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-semibold mb-4">บัญชีรายรับ-รายจ่าย</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6 text-center">
+                        <div class="bg-green-100 text-green-700 p-4 rounded-lg">
+                            <p class="font-medium">รวมรายรับ</p>
+                            <p class="text-2xl font-bold mt-1">฿<span id="total-revenue">0</span></p>
+                        </div>
+                        <div class="bg-red-100 text-red-700 p-4 rounded-lg">
+                            <p class="font-medium">รวมรายจ่าย</p>
+                            <p class="text-2xl font-bold mt-1">฿<span id="total-expenses">0</span></p>
+                        </div>
+                        <div class="bg-blue-100 text-blue-700 p-4 rounded-lg">
+                            <p class="font-medium">กำไรสุทธิ</p>
+                            <p class="text-2xl font-bold mt-1">฿<span id="net-profit">0</span></p>
+                        </div>
+                    </div>
+
+                    <div id="financial-summary-table" class="mt-6">
+                        <h4 class="text-lg font-semibold mb-2">สรุปรายวัน/เดือน/ปี</h4>
+                        <!-- Financial summary will be displayed here -->
+                    </div>
+                </div>
+            </section>
+            
+            <!-- My CRM Page -->
+            <section id="my_crm" class="page-content hidden">
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-semibold mb-4">ข้อมูลลูกค้าสัมพันธ์</h3>
+                    <div id="crm-list" class="space-y-4">
+                        <!-- CRM customers will be rendered here -->
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // --- UI and Navigation Logic ---
+            const menuButton = document.getElementById('menu-button');
+            const sidebar = document.getElementById('sidebar');
+            const pages = document.querySelectorAll('.page-content');
+            const pageTitle = document.getElementById('page-title');
+            const menuLinks = document.querySelectorAll('.menu-link');
+
+            menuButton.addEventListener('click', () => {
+                sidebar.classList.toggle('open');
+            });
+
+            menuLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const targetId = e.target.getAttribute('href').substring(1);
+                    const targetPage = document.getElementById(targetId);
+                    
+                    pages.forEach(page => page.classList.add('hidden'));
+                    targetPage.classList.remove('hidden');
+                    
+                    pageTitle.textContent = e.target.textContent;
+                    sidebar.classList.remove('open');
+                });
+            });
+
+            // --- Data Model (Using localStorage for simplicity) ---
+            const DB = {
+                products: JSON.parse(localStorage.getItem('products')) || [],
+                purchases: JSON.parse(localStorage.getItem('purchases')) || [],
+                orders: JSON.parse(localStorage.getItem('orders')) || [],
+                customers: JSON.parse(localStorage.getItem('customers')) || {},
+            };
+            
+            const saveData = () => {
+                localStorage.setItem('products', JSON.stringify(DB.products));
+                localStorage.setItem('purchases', JSON.stringify(DB.purchases));
+                localStorage.setItem('orders', JSON.stringify(DB.orders));
+                localStorage.setItem('customers', JSON.stringify(DB.customers));
+                updateDashboard();
+                updateFinancials();
+                updateCRM();
+                updateCalendar();
+                updateSales();
+            };
+
+            // --- Product Management (My Product) ---
+            const productForm = document.getElementById('product-form');
+            const productNameInput = document.getElementById('product-name');
+            const productPriceInput = document.getElementById('product-price');
+            const productCostInput = document.getElementById('product-cost');
+            const productStockInput = document.getElementById('product-stock');
+            const productIdInput = document.getElementById('product-id');
+            const productTableBody = document.getElementById('product-table-body');
+            
+            const renderProducts = () => {
+                productTableBody.innerHTML = '';
+                DB.products.forEach(product => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${product.name}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">฿${product.price}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">฿${product.cost}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${product.stock}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            <button data-id="${product.id}" class="edit-btn text-indigo-600 hover:text-indigo-900 mr-2">แก้ไข</button>
+                            <button data-id="${product.id}" class="delete-btn text-red-600 hover:text-red-900">ลบ</button>
+                        </td>
+                    `;
+                    productTableBody.appendChild(row);
+                });
+            };
+
+            productForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const id = productIdInput.value;
+                const newProduct = {
+                    id: id || Date.now(),
+                    name: productNameInput.value,
+                    price: parseFloat(productPriceInput.value),
+                    cost: parseFloat(productCostInput.value),
+                    stock: parseInt(productStockInput.value, 10),
+                };
+
+                if (id) {
+                    const index = DB.products.findIndex(p => p.id == id);
+                    if (index > -1) {
+                        DB.products[index] = newProduct;
+                    }
+                } else {
+                    DB.products.push(newProduct);
+                }
+                
+                productForm.reset();
+                productIdInput.value = '';
+                saveData();
+                renderProducts();
+            });
+
+            productTableBody.addEventListener('click', (e) => {
+                if (e.target.classList.contains('edit-btn')) {
+                    const id = e.target.dataset.id;
+                    const productToEdit = DB.products.find(p => p.id == id);
+                    if (productToEdit) {
+                        productIdInput.value = productToEdit.id;
+                        productNameInput.value = productToEdit.name;
+                        productPriceInput.value = productToEdit.price;
+                        productCostInput.value = productToEdit.cost;
+                        productStockInput.value = productToEdit.stock;
+                    }
+                } else if (e.target.classList.contains('delete-btn')) {
+                    const id = e.target.dataset.id;
+                    DB.products = DB.products.filter(p => p.id != id);
+                    saveData();
+                    renderProducts();
+                }
+            });
+
+            // --- Purchase Management (My Purchase) ---
+            const purchaseForm = document.getElementById('purchase-form');
+            const purchaseTableBody = document.getElementById('purchase-table-body');
+            
+            const renderPurchases = () => {
+                purchaseTableBody.innerHTML = '';
+                DB.purchases.forEach((purchase, index) => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${purchase.date}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${purchase.item}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">฿${purchase.amount}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            <button data-index="${index}" class="delete-purchase-btn text-red-600 hover:text-red-900">ลบ</button>
+                        </td>
+                    `;
+                    purchaseTableBody.appendChild(row);
+                });
+            };
+
+            purchaseForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const newPurchase = {
+                    date: document.getElementById('purchase-date').value,
+                    item: document.getElementById('purchase-item').value,
+                    amount: parseFloat(document.getElementById('purchase-amount').value),
+                };
+                DB.purchases.push(newPurchase);
+                purchaseForm.reset();
+                saveData();
+                renderPurchases();
+            });
+            
+            purchaseTableBody.addEventListener('click', (e) => {
+                if (e.target.classList.contains('delete-purchase-btn')) {
+                    const index = e.target.dataset.index;
+                    DB.purchases.splice(index, 1);
+                    saveData();
+                    renderPurchases();
+                }
+            });
+
+            // --- Order & Sale Management (My Order & My Sale) ---
+            const orderForm = document.getElementById('order-form');
+            const addOrderItemBtn = document.getElementById('add-order-item-btn');
+            const orderItemsList = document.getElementById('order-items-list');
+            const orderTotalPriceSpan = document.getElementById('order-total-price');
+            const saleListDiv = document.getElementById('sale-list');
+            const customerNameInput = document.getElementById('order-customer-name');
+            const customerSuggestionsDiv = document.getElementById('customer-suggestions');
+
+            const updateOrderTotalPrice = () => {
+                let total = 0;
+                orderItemsList.querySelectorAll('.order-item').forEach(itemDiv => {
+                    const quantity = parseInt(itemDiv.querySelector('input[type="number"]').value, 10);
+                    const price = parseFloat(itemDiv.querySelector('input[type="number"]').dataset.price);
+                    total += quantity * price;
+                });
+                const shippingCost = parseFloat(document.getElementById('order-shipping-cost').value) || 0;
+                const discount = parseFloat(document.getElementById('order-discount').value) || 0;
+                total = total + shippingCost - discount;
+                orderTotalPriceSpan.textContent = total.toFixed(2);
+            };
+
+            const addOrderItem = (productName = '', quantity = 1, price = 0) => {
+                const productOptions = DB.products.map(p => {
+                    const disabled = p.stock <= 0 ? 'disabled' : '';
+                    const selected = p.name === productName ? 'selected' : '';
+                    return `<option value="${p.id}" data-price="${p.price}" data-cost="${p.cost}" data-stock="${p.stock}" ${disabled} ${selected}>${p.name} (คงเหลือ: ${p.stock})</option>`;
+                }).join('');
+
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'order-item p-4 border rounded-md shadow-sm bg-gray-50';
+                itemDiv.innerHTML = `
+                    <div class="flex items-center space-x-2 mb-2">
+                        <label class="block text-sm font-medium text-gray-700 w-1/3">สินค้า</label>
+                        <select class="order-product-select mt-1 block w-2/3 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
+                            <option value="">เลือกสินค้า</option>
+                            ${productOptions}
+                        </select>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <label class="block text-sm font-medium text-gray-700 w-1/3">จำนวน</label>
+                        <input type="number" value="${quantity}" min="1" class="order-quantity-input mt-1 block w-2/3 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" data-price="${price}" required>
+                    </div>
+                    <button type="button" class="remove-order-item-btn mt-2 bg-red-500 text-white text-xs font-medium py-1 px-2 rounded-md hover:bg-red-600 float-right">ลบ</button>
+                `;
+                orderItemsList.appendChild(itemDiv);
+
+                const selectElement = itemDiv.querySelector('.order-product-select');
+                const quantityInput = itemDiv.querySelector('.order-quantity-input');
+                
+                selectElement.addEventListener('change', () => {
+                    const selectedOption = selectElement.options[selectElement.selectedIndex];
+                    const price = parseFloat(selectedOption.dataset.price) || 0;
+                    quantityInput.dataset.price = price;
+                    const stock = parseInt(selectedOption.dataset.stock, 10);
+                    quantityInput.max = stock;
+                    if (parseInt(quantityInput.value) > stock) {
+                        quantityInput.value = stock;
+                    }
+                    updateOrderTotalPrice();
+                });
+                
+                quantityInput.addEventListener('input', updateOrderTotalPrice);
+            };
+
+            addOrderItemBtn.addEventListener('click', () => addOrderItem());
+
+            orderItemsList.addEventListener('click', (e) => {
+                if (e.target.classList.contains('remove-order-item-btn')) {
+                    e.target.closest('.order-item').remove();
+                    updateOrderTotalPrice();
+                }
+            });
+            
+            customerNameInput.addEventListener('input', () => {
+                const query = customerNameInput.value.toLowerCase();
+                customerSuggestionsDiv.innerHTML = '';
+                if (query.length > 0) {
+                    const customerNames = Object.keys(DB.customers);
+                    const suggestions = customerNames.filter(name => name.toLowerCase().includes(query));
+                    if (suggestions.length > 0) {
+                        customerSuggestionsDiv.classList.remove('hidden');
+                        suggestions.forEach(name => {
+                            const suggestionItem = document.createElement('div');
+                            suggestionItem.textContent = name;
+                            suggestionItem.className = 'p-2 cursor-pointer hover:bg-gray-200';
+                            suggestionItem.addEventListener('click', () => {
+                                customerNameInput.value = name;
+                                customerSuggestionsDiv.classList.add('hidden');
+                            });
+                            customerSuggestionsDiv.appendChild(suggestionItem);
+                        });
+                    } else {
+                        customerSuggestionsDiv.classList.add('hidden');
+                    }
+                } else {
+                    customerSuggestionsDiv.classList.add('hidden');
+                }
+            });
+            
+            orderForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const orderItems = [];
+                let totalCost = 0;
+                let totalSale = 0;
+                let isStockValid = true;
+
+                orderItemsList.querySelectorAll('.order-item').forEach(itemDiv => {
+                    const select = itemDiv.querySelector('.order-product-select');
+                    const quantity = parseInt(itemDiv.querySelector('.order-quantity-input').value, 10);
+                    const productId = select.value;
+                    const product = DB.products.find(p => p.id == productId);
+
+                    if (!product || quantity > product.stock) {
+                        isStockValid = false;
+                        return;
+                    }
+
+                    orderItems.push({
+                        productId,
+                        name: product.name,
+                        quantity,
+                        price: product.price,
+                        cost: product.cost
+                    });
+                    totalCost += product.cost * quantity;
+                    totalSale += product.price * quantity;
+                });
+                
+                if (!isStockValid) {
+                    alert('สินค้าบางรายการมีจำนวนไม่เพียงพอ โปรดตรวจสอบสต็อกอีกครั้ง');
+                    return;
+                }
+
+                const shippingCost = parseFloat(document.getElementById('order-shipping-cost').value) || 0;
+                const discount = parseFloat(document.getElementById('order-discount').value) || 0;
+                const finalPrice = totalSale + shippingCost - discount;
+                const totalProfit = finalPrice - totalCost - shippingCost;
+
+                const newOrder = {
+                    id: Date.now(),
+                    customerName: customerNameInput.value,
+                    deliveryDate: document.getElementById('order-delivery-date').value,
+                    deliveryAddress: document.getElementById('order-delivery-address').value,
+                    items: orderItems,
+                    shippingCost,
+                    discount,
+                    totalPrice: finalPrice,
+                    totalCost,
+                    totalProfit,
+                    status: 'Pending'
+                };
+                
+                // Update product stock
+                orderItems.forEach(item => {
+                    const product = DB.products.find(p => p.id == item.productId);
+                    if (product) {
+                        product.stock -= item.quantity;
+                    }
+                });
+                
+                // Update CRM
+                if (!DB.customers[newOrder.customerName]) {
+                    DB.customers[newOrder.customerName] = {
+                        orders: []
+                    };
+                }
+                DB.customers[newOrder.customerName].orders.push({
+                    id: newOrder.id,
+                    date: newOrder.deliveryDate,
+                    items: newOrder.items,
+                    total: newOrder.totalPrice
+                });
+
+                DB.orders.push(newOrder);
+                orderForm.reset();
+                orderItemsList.innerHTML = '';
+                addOrderItem(); // Add a new item row
+                saveData();
+                renderSales();
+                renderProducts(); // Update stock display
+            });
+            
+            const renderSales = () => {
+                saleListDiv.innerHTML = '';
+                DB.orders.forEach(order => {
+                    const orderDiv = document.createElement('div');
+                    const isPending = order.status === 'Pending';
+                    const isDelivered = order.status === 'Delivered';
+                    orderDiv.className = `p-4 rounded-lg shadow-md ${isDelivered ? 'bg-green-100' : 'bg-white'}`;
+                    
+                    const deliveryDate = new Date(order.deliveryDate + 'T00:00:00').toLocaleDateString('th-TH');
+
+                    const productListHtml = order.items.map(item => `
+                        <li>${item.name} (${item.quantity} ชิ้น)</li>
+                    `).join('');
+
+                    orderDiv.innerHTML = `
+                        <div class="flex justify-between items-start">
+                            <h4 class="text-lg font-semibold text-gray-900">ออเดอร์จาก: ${order.customerName}</h4>
+                            <span class="text-sm font-medium ${isDelivered ? 'text-green-600' : 'text-yellow-600'}">สถานะ: ${order.status === 'Pending' ? 'ค้างส่ง' : 'ส่งสำเร็จ'}</span>
+                        </div>
+                        <p class="text-gray-600 mt-1">วันที่ส่ง: ${deliveryDate}</p>
+                        <p class="text-gray-600">ที่อยู่: ${order.deliveryAddress}</p>
+                        <ul class="list-disc list-inside mt-2 text-sm text-gray-700">
+                            ${productListHtml}
+                        </ul>
+                        <p class="text-sm text-gray-700 mt-2">ค่าส่ง: ฿${order.shippingCost}</p>
+                        <p class="text-sm text-gray-700">ส่วนลด: ฿${order.discount}</p>
+                        <p class="text-md font-semibold mt-2 text-gray-900">ยอดรวม: ฿${order.totalPrice}</p>
+                        ${isPending ? `
+                            <div class="mt-4 flex space-x-2">
+                                <button data-id="${order.id}" class="complete-btn bg-green-500 text-white font-medium py-2 px-4 rounded-md shadow-sm hover:bg-green-600">ส่งสำเร็จ</button>
+                                <button data-id="${order.id}" class="reschedule-btn bg-yellow-500 text-white font-medium py-2 px-4 rounded-md shadow-sm hover:bg-yellow-600">เลื่อนวันส่ง</button>
+                            </div>` : ''}
+                    `;
+                    saleListDiv.appendChild(orderDiv);
+                });
+            };
+            
+            saleListDiv.addEventListener('click', (e) => {
+                const button = e.target;
+                const id = button.dataset.id;
+                const order = DB.orders.find(o => o.id == id);
+                if (order) {
+                    if (button.classList.contains('complete-btn')) {
+                        order.status = 'Delivered';
+                        DB.purchases.push({
+                            date: new Date().toISOString().split('T')[0],
+                            item: `รายรับจากออเดอร์ ${order.customerName}`,
+                            amount: order.totalPrice
+                        });
+                        saveData();
+                        renderSales();
+                    } else if (button.classList.contains('reschedule-btn')) {
+                        const newDate = prompt("กรุณาป้อนวันที่ส่งใหม่ (YYYY-MM-DD):");
+                        if (newDate) {
+                            order.deliveryDate = newDate;
+                            saveData();
+                            renderSales();
+                        }
+                    }
+                }
+            });
+
+            // --- Calendar View (My Calendar) ---
+            const calendarDiv = document.getElementById('calendar');
+            const calendarModal = document.getElementById('calendar-modal');
+            const modalDateTitle = document.getElementById('modal-date-title');
+            const modalOrdersList = document.getElementById('modal-orders-list');
+            const closeModalBtn = document.getElementById('close-modal-btn');
+            
+            const renderCalendar = (year, month) => {
+                calendarDiv.innerHTML = '';
+                const today = new Date();
+                const currentMonth = new Date(year, month, 1);
+                const firstDay = currentMonth.getDay(); // 0-6, Sunday is 0
+                const daysInMonth = new Date(year, month + 1, 0).getDate();
+                
+                const header = document.createElement('div');
+                header.className = 'flex justify-between items-center mb-4';
+                header.innerHTML = `
+                    <button id="prev-month-btn" class="text-xl font-bold p-2 rounded-full hover:bg-gray-200">&lt;</button>
+                    <h4 class="text-xl font-semibold">${currentMonth.toLocaleString('th-TH', { month: 'long', year: 'numeric' })}</h4>
+                    <button id="next-month-btn" class="text-xl font-bold p-2 rounded-full hover:bg-gray-200">&gt;</button>
+                `;
+                calendarDiv.appendChild(header);
+                
+                const dayNames = document.createElement('div');
+                dayNames.className = 'grid grid-cols-7 gap-1 text-center font-bold text-sm text-gray-600 mb-2';
+                const dayNamesArr = ['อา', 'จ', 'อ', 'พ', 'พฤ', 'ศ', 'ส'];
+                dayNamesArr.forEach(day => {
+                    const dayName = document.createElement('div');
+                    dayName.textContent = day;
+                    dayNames.appendChild(dayName);
+                });
+                calendarDiv.appendChild(dayNames);
+
+                const daysGrid = document.createElement('div');
+                daysGrid.className = 'grid grid-cols-7 gap-1';
+                
+                for (let i = 0; i < firstDay; i++) {
+                    const emptyDay = document.createElement('div');
+                    daysGrid.appendChild(emptyDay);
+                }
+
+                for (let i = 1; i <= daysInMonth; i++) {
+                    const date = new Date(year, month, i).toISOString().split('T')[0];
+                    const ordersOnDate = DB.orders.filter(order => order.deliveryDate === date);
+                    
+                    const dayDiv = document.createElement('div');
+                    dayDiv.className = `p-2 rounded-lg text-center cursor-pointer ${ordersOnDate.length > 0 ? 'bg-blue-200 hover:bg-blue-300' : 'bg-gray-200 hover:bg-gray-300'}`;
+                    dayDiv.dataset.date = date;
+                    dayDiv.innerHTML = `
+                        <p class="font-semibold">${i}</p>
+                        ${ordersOnDate.length > 0 ? `<p class="text-xs font-bold text-blue-800">${ordersOnDate.length} ออเดอร์</p>` : ''}
+                    `;
+                    daysGrid.appendChild(dayDiv);
+                }
+                calendarDiv.appendChild(daysGrid);
+                
+                document.getElementById('prev-month-btn').addEventListener('click', () => {
+                    const newDate = new Date(year, month - 1);
+                    renderCalendar(newDate.getFullYear(), newDate.getMonth());
+                });
+                
+                document.getElementById('next-month-btn').addEventListener('click', () => {
+                    const newDate = new Date(year, month + 1);
+                    renderCalendar(newDate.getFullYear(), newDate.getMonth());
+                });
+            };
+            
+            calendarDiv.addEventListener('click', (e) => {
+                const dayDiv = e.target.closest('div[data-date]');
+                if (dayDiv) {
+                    const selectedDate = dayDiv.dataset.date;
+                    const ordersOnDate = DB.orders.filter(order => order.deliveryDate === selectedDate);
+                    
+                    if (ordersOnDate.length > 0) {
+                        modalDateTitle.textContent = `คำสั่งซื้อวันที่ ${new Date(selectedDate + 'T00:00:00').toLocaleDateString('th-TH')}`;
+                        modalOrdersList.innerHTML = '';
+                        ordersOnDate.forEach(order => {
+                            const orderDiv = document.createElement('div');
+                            orderDiv.className = 'p-4 border rounded-md shadow-sm bg-gray-50';
+                            orderDiv.innerHTML = `
+                                <p class="font-semibold">ลูกค้า: ${order.customerName}</p>
+                                <p class="text-sm">ยอดรวม: ฿${order.totalPrice}</p>
+                                <p class="text-sm">สถานะ: ${order.status === 'Pending' ? 'ค้างส่ง' : 'ส่งสำเร็จ'}</p>
+                            `;
+                            modalOrdersList.appendChild(orderDiv);
+                        });
+                        calendarModal.classList.remove('hidden');
+                        calendarModal.classList.add('flex');
+                    }
+                }
+            });
+
+            closeModalBtn.addEventListener('click', () => {
+                calendarModal.classList.add('hidden');
+                calendarModal.classList.remove('flex');
+            });
+
+            // --- Financial Account (My Financial Account) ---
+            const totalRevenueSpan = document.getElementById('total-revenue');
+            const totalExpensesSpan = document.getElementById('total-expenses');
+            const netProfitSpan = document.getElementById('net-profit');
+            
+            const updateFinancials = () => {
+                let totalRevenue = 0;
+                let totalExpenses = 0;
+                
+                DB.orders.filter(o => o.status === 'Delivered').forEach(order => {
+                    totalRevenue += order.totalPrice;
+                });
+                
+                DB.purchases.forEach(purchase => {
+                    totalExpenses += purchase.amount;
+                });
+                
+                const netProfit = totalRevenue - totalExpenses;
+                
+                totalRevenueSpan.textContent = totalRevenue.toFixed(2);
+                totalExpensesSpan.textContent = totalExpenses.toFixed(2);
+                netProfitSpan.textContent = netProfit.toFixed(2);
+            };
+
+            // --- CRM Management (My CRM) ---
+            const crmListDiv = document.getElementById('crm-list');
+            
+            const updateCRM = () => {
+                crmListDiv.innerHTML = '';
+                const customerNames = Object.keys(DB.customers);
+                
+                customerNames.forEach(name => {
+                    const customerData = DB.customers[name];
+                    const totalOrderCount = customerData.orders.length;
+                    const totalOrderAmount = customerData.orders.reduce((sum, order) => sum + order.total, 0);
+                    
+                    const customerDiv = document.createElement('div');
+                    customerDiv.className = 'bg-white p-4 rounded-lg shadow-md';
+                    customerDiv.innerHTML = `
+                        <h4 class="text-lg font-semibold text-gray-900">${name}</h4>
+                        <p class="text-gray-600 mt-1">จำนวนการสั่งซื้อ: ${totalOrderCount} ครั้ง</p>
+                        <p class="text-gray-600">ยอดรวมทั้งหมด: ฿${totalOrderAmount.toFixed(2)}</p>
+                        <button class="view-customer-orders-btn text-blue-500 hover:underline mt-2" data-name="${name}">ดูรายละเอียดการสั่งซื้อ</button>
+                    `;
+                    crmListDiv.appendChild(customerDiv);
+                });
+                
+                // Event listener for CRM details button
+                crmListDiv.querySelectorAll('.view-customer-orders-btn').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        const customerName = e.target.dataset.name;
+                        const customerData = DB.customers[customerName];
+                        if (customerData) {
+                            let orderDetails = `<h5 class="font-semibold mb-2">ประวัติการสั่งซื้อของ ${customerName}</h5>`;
+                            customerData.orders.forEach(order => {
+                                const orderItemsHtml = order.items.map(item => `
+                                    <li>${item.name} (${item.quantity} ชิ้น)</li>
+                                `).join('');
+                                orderDetails += `
+                                    <div class="p-2 border-b">
+                                        <p>วันที่สั่ง: ${new Date(order.date).toLocaleDateString('th-TH')}</p>
+                                        <p>ยอดรวม: ฿${order.total}</p>
+                                        <ul class="list-disc list-inside text-sm">
+                                            ${orderItemsHtml}
+                                        </ul>
+                                    </div>
+                                `;
+                            });
+                             // Use a modal-like behavior for the alert
+                            const messageBox = document.createElement('div');
+                            messageBox.className = 'fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-[100]';
+                            messageBox.innerHTML = `
+                                <div class="bg-white p-6 rounded-lg shadow-xl w-11/12 md:w-1/2">
+                                    <div class="flex justify-between items-center mb-4">
+                                        <h4 class="text-lg font-semibold">รายละเอียดลูกค้า</h4>
+                                        <button class="close-msg-box text-gray-500 hover:text-gray-700">&times;</button>
+                                    </div>
+                                    <div class="max-h-96 overflow-y-auto">
+                                        ${orderDetails}
+                                    </div>
+                                </div>
+                            `;
+                            document.body.appendChild(messageBox);
+                            
+                            messageBox.querySelector('.close-msg-box').addEventListener('click', () => {
+                                messageBox.remove();
+                            });
+                        }
+                    });
+                });
+            };
+
+            // --- Dashboard Updates ---
+            const updateDashboard = () => {
+                const deliveredOrders = DB.orders.filter(o => o.status === 'Delivered');
+                const today = new Date().toISOString().split('T')[0];
+                const todaySales = deliveredOrders.filter(o => o.deliveryDate === today);
+                
+                const totalSalesToday = todaySales.reduce((sum, order) => sum + order.totalPrice, 0);
+                const totalProfitToday = todaySales.reduce((sum, order) => sum + order.totalProfit, 0);
+                
+                document.getElementById('today-sales').textContent = totalSalesToday.toFixed(2);
+                document.getElementById('today-profit').textContent = totalProfitToday.toFixed(2);
+                document.getElementById('pending-orders').textContent = DB.orders.filter(o => o.status === 'Pending').length;
+                document.getElementById('total-customers').textContent = Object.keys(DB.customers).length;
+            };
+
+            // Initial rendering
+            renderProducts();
+            renderPurchases();
+            addOrderItem(); // Start with one item row
+            renderSales();
+            renderCalendar(new Date().getFullYear(), new Date().getMonth());
+            updateDashboard();
+            updateFinancials();
+            updateCRM();
+        });
+    </script>
+
+</body>
+</html>
