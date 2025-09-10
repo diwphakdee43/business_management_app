@@ -4,9 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ระบบจัดการธุรกิจ</title>
-    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Inter Font -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
     <style>
         body {
@@ -23,7 +21,6 @@
 </head>
 <body class="bg-gray-100 text-gray-800 flex min-h-screen">
 
-    <!-- Sidebar Menu -->
     <aside id="sidebar" class="sidebar fixed inset-y-0 left-0 w-64 bg-gray-900 text-gray-200 z-50 overflow-y-auto lg:translate-x-0 lg:static lg:block">
         <div class="p-6">
             <h1 class="text-2xl font-bold text-white mb-6">Business Dashboard</h1>
@@ -42,9 +39,7 @@
         </div>
     </aside>
 
-    <!-- Main Content Area -->
     <div class="flex-1 flex flex-col p-6 overflow-hidden">
-        <!-- Header -->
         <header class="bg-white rounded-lg shadow-md p-4 mb-6 flex justify-between items-center">
             <button id="menu-button" class="lg:hidden text-gray-600 focus:outline-none">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -54,13 +49,10 @@
             <h2 id="page-title" class="text-xl font-semibold text-gray-900">หน้าหลัก</h2>
         </header>
 
-        <!-- Content Area -->
         <main class="flex-1 overflow-y-auto">
 
-            <!-- Dashboard Page -->
             <section id="dashboard" class="page-content active">
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    <!-- Dashboard Cards -->
                     <div class="bg-white p-6 rounded-lg shadow-md">
                         <div class="text-gray-500 text-sm font-medium">ยอดขายวันนี้</div>
                         <div class="text-3xl font-bold mt-2">฿<span id="today-sales">0</span></div>
@@ -80,7 +72,6 @@
                 </div>
             </section>
 
-            <!-- My Product Page -->
             <section id="my_products" class="page-content hidden">
                 <div class="bg-white p-6 rounded-lg shadow-md">
                     <h3 class="text-xl font-semibold mb-4">เพิ่ม/จัดการสินค้า</h3>
@@ -117,25 +108,39 @@
                                 </tr>
                             </thead>
                             <tbody id="product-table-body" class="divide-y divide-gray-200">
-                                <!-- Products will be rendered here -->
-                            </tbody>
+                                </tbody>
                         </table>
                     </div>
                 </div>
             </section>
 
-            <!-- My Purchase Page -->
             <section id="my_purchase" class="page-content hidden">
                 <div class="bg-white p-6 rounded-lg shadow-md">
-                    <h3 class="text-xl font-semibold mb-4">เพิ่มรายการซื้อ</h3>
+                    <h3 class="text-xl font-semibold mb-4">เพิ่มรายการซื้อ (รายจ่าย)</h3>
                     <form id="purchase-form" class="space-y-4 mb-6">
                         <div>
                             <label for="purchase-date" class="block text-sm font-medium text-gray-700">วันที่</label>
                             <input type="date" id="purchase-date" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
                         </div>
                         <div>
+                            <label for="purchase-item-type" class="block text-sm font-medium text-gray-700">ประเภทรายการ</label>
+                            <select id="purchase-item-type" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
+                                <option value="product">ซื้อสินค้าเข้าสต็อก</option>
+                                <option value="expense">รายจ่ายอื่นๆ</option>
+                            </select>
+                        </div>
+                        <div id="purchase-product-select-container">
+                            <label for="purchase-product-select" class="block text-sm font-medium text-gray-700">สินค้า</label>
+                            <select id="purchase-product-select" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
+                                </select>
+                        </div>
+                        <div id="purchase-item-input-container" class="hidden">
                             <label for="purchase-item" class="block text-sm font-medium text-gray-700">รายการที่ซื้อ</label>
-                            <input type="text" id="purchase-item" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
+                            <input type="text" id="purchase-item" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                        </div>
+                        <div>
+                            <label for="purchase-quantity" class="block text-sm font-medium text-gray-700">จำนวน (ชิ้น)</label>
+                            <input type="number" id="purchase-quantity" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" min="1" value="1" required>
                         </div>
                         <div>
                             <label for="purchase-amount" class="block text-sm font-medium text-gray-700">จำนวนเงิน (บาท)</label>
@@ -150,19 +155,18 @@
                                 <tr>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">วันที่</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">รายการ</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">จำนวน</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">จำนวนเงิน</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">จัดการ</th>
                                 </tr>
                             </thead>
                             <tbody id="purchase-table-body" class="divide-y divide-gray-200">
-                                <!-- Purchases will be rendered here -->
-                            </tbody>
+                                </tbody>
                         </table>
                     </div>
                 </div>
             </section>
 
-            <!-- My Order Page -->
             <section id="my_order" class="page-content hidden">
                 <div class="bg-white p-6 rounded-lg shadow-md">
                     <h3 class="text-xl font-semibold mb-4">สร้างคำสั่งซื้อใหม่</h3>
@@ -182,8 +186,7 @@
                         </div>
                         
                         <div id="order-items-list" class="space-y-4">
-                            <!-- Order items will be added here -->
-                        </div>
+                            </div>
                         <button type="button" id="add-order-item-btn" class="w-full bg-green-500 hover:bg-green-600 text-white font-medium py-2 px-4 rounded-md shadow-sm">เพิ่มสินค้า</button>
 
                         <div>
@@ -203,23 +206,19 @@
                 </div>
             </section>
 
-            <!-- My Sale Page -->
             <section id="my_sale" class="page-content hidden">
                 <div class="bg-white p-6 rounded-lg shadow-md">
                     <h3 class="text-xl font-semibold mb-4">รายการขาย</h3>
                     <div id="sale-list" class="space-y-4">
-                        <!-- Sales orders will be rendered here -->
-                    </div>
+                        </div>
                 </div>
             </section>
 
-            <!-- My Calendar Page -->
             <section id="my_calendar" class="page-content hidden">
                 <div class="bg-white p-6 rounded-lg shadow-md">
                     <h3 class="text-xl font-semibold mb-4">ปฏิทินการจัดส่ง</h3>
                     <div id="calendar" class="w-full">
-                        <!-- Calendar will be generated here -->
-                    </div>
+                        </div>
                     <div id="calendar-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden items-center justify-center z-50">
                         <div class="bg-white rounded-lg shadow-xl p-6 w-11/12 md:w-2/3 lg:w-1/2">
                             <div class="flex justify-between items-center mb-4">
@@ -227,14 +226,12 @@
                                 <button id="close-modal-btn" class="text-gray-500 hover:text-gray-700">&times;</button>
                             </div>
                             <div id="modal-orders-list" class="space-y-4 max-h-96 overflow-y-auto">
-                                <!-- Orders for the selected date will be rendered here -->
-                            </div>
+                                </div>
                         </div>
                     </div>
                 </div>
             </section>
 
-            <!-- My Financial Account Page -->
             <section id="my_financial_account" class="page-content hidden">
                 <div class="bg-white p-6 rounded-lg shadow-md">
                     <h3 class="text-xl font-semibold mb-4">บัญชีรายรับ-รายจ่าย</h3>
@@ -254,26 +251,34 @@
                     </div>
 
                     <div id="financial-summary-table" class="mt-6">
-                        <h4 class="text-lg font-semibold mb-2">สรุปรายวัน/เดือน/ปี</h4>
-                        <!-- Financial summary will be displayed here -->
+                        <h4 class="text-lg font-semibold mb-2">สรุปรายรับ-รายจ่าย</h4>
+                        <table class="min-w-full bg-white rounded-md shadow-sm overflow-hidden">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">วันที่</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">รายการ</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">รายรับ</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">รายจ่าย</th>
+                                </tr>
+                            </thead>
+                            <tbody id="financial-table-body" class="divide-y divide-gray-200">
+                                </tbody>
+                        </table>
                     </div>
                 </div>
             </section>
             
-            <!-- My CRM Page -->
             <section id="my_crm" class="page-content hidden">
                 <div class="bg-white p-6 rounded-lg shadow-md">
                     <h3 class="text-xl font-semibold mb-4">ข้อมูลลูกค้าสัมพันธ์</h3>
                     <div id="crm-list" class="space-y-4">
-                        <!-- CRM customers will be rendered here -->
-                    </div>
+                        </div>
                 </div>
             </section>
 
         </main>
     </div>
 
-    <!-- JavaScript -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
 
@@ -306,6 +311,7 @@
             const DB = {
                 products: JSON.parse(localStorage.getItem('products')) || [],
                 purchases: JSON.parse(localStorage.getItem('purchases')) || [],
+                revenues: JSON.parse(localStorage.getItem('revenues')) || [],
                 orders: JSON.parse(localStorage.getItem('orders')) || [],
                 customers: JSON.parse(localStorage.getItem('customers')) || {},
             };
@@ -313,6 +319,7 @@
             const saveData = () => {
                 localStorage.setItem('products', JSON.stringify(DB.products));
                 localStorage.setItem('purchases', JSON.stringify(DB.purchases));
+                localStorage.setItem('revenues', JSON.stringify(DB.revenues));
                 localStorage.setItem('orders', JSON.stringify(DB.orders));
                 localStorage.setItem('customers', JSON.stringify(DB.customers));
                 updateDashboard();
@@ -397,7 +404,43 @@
             // --- Purchase Management (My Purchase) ---
             const purchaseForm = document.getElementById('purchase-form');
             const purchaseTableBody = document.getElementById('purchase-table-body');
+            const purchaseItemTypeSelect = document.getElementById('purchase-item-type');
+            const purchaseProductSelectContainer = document.getElementById('purchase-product-select-container');
+            const purchaseProductSelect = document.getElementById('purchase-product-select');
+            const purchaseItemInputContainer = document.getElementById('purchase-item-input-container');
+            const purchaseItemInput = document.getElementById('purchase-item');
             
+            const renderPurchaseProductOptions = () => {
+                purchaseProductSelect.innerHTML = '';
+                const defaultOption = document.createElement('option');
+                defaultOption.value = "";
+                defaultOption.textContent = "เลือกสินค้า";
+                defaultOption.disabled = true;
+                defaultOption.selected = true;
+                purchaseProductSelect.appendChild(defaultOption);
+
+                DB.products.forEach(product => {
+                    const option = document.createElement('option');
+                    option.value = product.id;
+                    option.textContent = product.name;
+                    purchaseProductSelect.appendChild(option);
+                });
+            };
+
+            purchaseItemTypeSelect.addEventListener('change', () => {
+                if (purchaseItemTypeSelect.value === 'product') {
+                    purchaseProductSelectContainer.classList.remove('hidden');
+                    purchaseItemInputContainer.classList.add('hidden');
+                    purchaseProductSelect.setAttribute('required', 'required');
+                    purchaseItemInput.removeAttribute('required');
+                } else {
+                    purchaseProductSelectContainer.classList.add('hidden');
+                    purchaseItemInputContainer.classList.remove('hidden');
+                    purchaseProductSelect.removeAttribute('required');
+                    purchaseItemInput.setAttribute('required', 'required');
+                }
+            });
+
             const renderPurchases = () => {
                 purchaseTableBody.innerHTML = '';
                 DB.purchases.forEach((purchase, index) => {
@@ -405,6 +448,7 @@
                     row.innerHTML = `
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${purchase.date}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${purchase.item}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${purchase.quantity || 1}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">฿${purchase.amount}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                             <button data-index="${index}" class="delete-purchase-btn text-red-600 hover:text-red-900">ลบ</button>
@@ -416,23 +460,54 @@
 
             purchaseForm.addEventListener('submit', (e) => {
                 e.preventDefault();
+                const purchaseDate = document.getElementById('purchase-date').value;
+                const purchaseType = purchaseItemTypeSelect.value;
+                const purchaseAmount = parseFloat(document.getElementById('purchase-amount').value);
+                const purchaseQuantity = parseInt(document.getElementById('purchase-quantity').value, 10);
+                
+                let purchaseItemName = '';
+                if (purchaseType === 'product') {
+                    const productId = purchaseProductSelect.value;
+                    const product = DB.products.find(p => p.id == productId);
+                    if (product) {
+                        purchaseItemName = product.name;
+                        product.stock += purchaseQuantity;
+                    }
+                } else {
+                    purchaseItemName = purchaseItemInput.value;
+                }
+
                 const newPurchase = {
-                    date: document.getElementById('purchase-date').value,
-                    item: document.getElementById('purchase-item').value,
-                    amount: parseFloat(document.getElementById('purchase-amount').value),
+                    date: purchaseDate,
+                    item: purchaseItemName,
+                    quantity: purchaseQuantity,
+                    amount: purchaseAmount,
+                    type: purchaseType
                 };
+                
                 DB.purchases.push(newPurchase);
                 purchaseForm.reset();
                 saveData();
                 renderPurchases();
+                renderProducts(); // Update product list to show new stock
             });
             
             purchaseTableBody.addEventListener('click', (e) => {
                 if (e.target.classList.contains('delete-purchase-btn')) {
                     const index = e.target.dataset.index;
+                    const purchaseToDelete = DB.purchases[index];
+                    
+                    if(purchaseToDelete.type === 'product') {
+                        const product = DB.products.find(p => p.name === purchaseToDelete.item);
+                        if(product) {
+                            product.stock -= purchaseToDelete.quantity;
+                        }
+                    }
+                    
                     DB.purchases.splice(index, 1);
                     saveData();
                     renderPurchases();
+                    renderProducts(); // Update product list
                 }
             });
 
@@ -663,7 +738,7 @@
                 if (order) {
                     if (button.classList.contains('complete-btn')) {
                         order.status = 'Delivered';
-                        DB.purchases.push({
+                        DB.revenues.push({
                             date: new Date().toISOString().split('T')[0],
                             item: `รายรับจากออเดอร์ ${order.customerName}`,
                             amount: order.totalPrice
@@ -782,13 +857,14 @@
             const totalRevenueSpan = document.getElementById('total-revenue');
             const totalExpensesSpan = document.getElementById('total-expenses');
             const netProfitSpan = document.getElementById('net-profit');
+            const financialTableBody = document.getElementById('financial-table-body');
             
             const updateFinancials = () => {
                 let totalRevenue = 0;
                 let totalExpenses = 0;
-                
-                DB.orders.filter(o => o.status === 'Delivered').forEach(order => {
-                    totalRevenue += order.totalPrice;
+
+                DB.revenues.forEach(revenue => {
+                    totalRevenue += revenue.amount;
                 });
                 
                 DB.purchases.forEach(purchase => {
@@ -800,6 +876,26 @@
                 totalRevenueSpan.textContent = totalRevenue.toFixed(2);
                 totalExpensesSpan.textContent = totalExpenses.toFixed(2);
                 netProfitSpan.textContent = netProfit.toFixed(2);
+                
+                // Render financial summary table
+                const combinedData = [
+                    ...DB.revenues.map(d => ({ date: d.date, item: d.item, revenue: d.amount, expense: 0 })),
+                    ...DB.purchases.map(d => ({ date: d.date, item: d.item, revenue: 0, expense: d.amount }))
+                ];
+                
+                combinedData.sort((a, b) => new Date(a.date) - new Date(b.date));
+                
+                financialTableBody.innerHTML = '';
+                combinedData.forEach(entry => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${entry.date}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${entry.item}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium ${entry.revenue > 0 ? 'text-green-600' : 'text-gray-500'}">฿${entry.revenue.toFixed(2)}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium ${entry.expense > 0 ? 'text-red-600' : 'text-gray-500'}">฿${entry.expense.toFixed(2)}</td>
+                    `;
+                    financialTableBody.appendChild(row);
+                });
             };
 
             // --- CRM Management (My CRM) ---
@@ -887,6 +983,7 @@
 
             // Initial rendering
             renderProducts();
+            renderPurchaseProductOptions();
             renderPurchases();
             addOrderItem(); // Start with one item row
             renderSales();
